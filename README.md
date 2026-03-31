@@ -91,6 +91,6 @@ Additional implemented behavior:
 
 ## 📸 Demo
 ````
-<a href="ai110-module2show-pawpal-starter/Screenshot.png" target="_blank">
-  <img src="ai110-module2show-pawpal-starter/Screenshot.png" alt="PawPal App" width="400">
+<a href="Screenshot.png" target="_blank">
+  <img src="Screenshot.png" alt="PawPal App" width="400">
 </a>
