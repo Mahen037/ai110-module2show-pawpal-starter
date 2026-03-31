@@ -1,40 +1,6 @@
 from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import Any
-
-
-@dataclass
-class Owner:
-    name: str
-    daily_time_available: int
-    preferences: dict[str, Any] = field(default_factory=dict)
-
-    def update_profile(
-        self,
-        name: str,
-        daily_time_available: int,
-        preferences: dict[str, Any],
-    ) -> None:
-        pass
-
-
-@dataclass
-class Pet:
-    name: str
-    species: str
-    age: int
-    needs: list[str] = field(default_factory=list)
-
-    def update_details(
-        self,
-        name: str,
-        species: str,
-        age: int,
-        needs: list[str],
-    ) -> None:
-        pass
-
 
 @dataclass
 class CareTask:
@@ -43,13 +9,29 @@ class CareTask:
     priority: int
     is_required: bool
 
-    def update_task(
-        self,
-        title: str,
-        duration_minutes: int,
-        priority: int,
-        is_required: bool,
-    ) -> None:
+    def update_task(self, title: str, duration_minutes: int, priority: int, is_required: bool) -> None:
+        pass
+
+
+@dataclass
+class Pet:
+    name: str
+    species: str
+    age: int
+    tasks: list[CareTask] = field(default_factory=list)
+
+    def update_details(self, name: str, species: str, age: int, tasks: list[CareTask]) -> None:
+        pass
+
+
+@dataclass
+class Owner:
+    name: str
+    daily_time_available: int
+    preferences: dict[str, Any] = field(default_factory=dict)
+    pets: list[Pet] = field(default_factory=list)
+
+    def update_profile(self, name: str, daily_time_available: int, preferences: dict[str, Any]) -> None:
         pass
 
 
