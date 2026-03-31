@@ -90,6 +90,7 @@ Additional implemented behavior:
 - Conflict visibility in Streamlit via `st.warning(...)` + timeline tables
 
 ## 📸 Demo
-[DEMO](ai110-module2show-pawpal-starter/Screenshot.png)
-
 ````
+<a href="ai110-module2show-pawpal-starter/Screenshot.png" target="_blank">
+  <img src="ai110-module2show-pawpal-starter/Screenshot.png" alt="PawPal App" width="400">
+</a>
