@@ -13,17 +13,17 @@ Build a daily schedule based on available time and constraints, then view the or
 
 - Briefly describe your initial UML design.
     
-    My initial UML design used four main classes: **Owner**, **Pet**, **CareTask**, and **Scheduler**.
+    My initial UML design used four main classes: **Owner**, **Pet**, **Task**, and **Scheduler**.
 
 - What classes did you include, and what responsibilities did you assign to each?
     - **Owner**: stores owner details, available daily time, and preferences.
     - **Pet**: stores pet profile information and care needs.
-    - **CareTask**: represents one care task with duration, priority, and required/optional status.
+    - **Task**: represents one care task with duration, priority, and required/optional status.
     - **Scheduler**: takes tasks and constraints, ranks tasks, and generates a daily plan.
 
     I modeled relationships as:
     - Owner has one or more pets.
-    - Pet has zero or more care tasks.
+    - Pet has zero or more tasks.
     - Scheduler depends on Owner preferences and CareTask data.
 
 
@@ -74,13 +74,20 @@ This is reasonable for this scenario because a realistic, executable plan is mor
 **a. How you used AI**
 
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
-- What kinds of prompts or questions were most helpful?
+Design brainstorming (classes, method responsibilities, tradeoffs).
+Debugging (time parsing bugs, missing validations, edge-case handling).
+Refactoring (cleaning scheduler methods and reducing repeated logic).
+Feature extension (sorting by time, filtering, recurring tasks, conflict detection).
 
+- What kinds of prompts or questions were most helpful?
+Most helpful prompts were specific and constraint-based, for example:
+“Implement sort_by_time() using HH:MM and lambda key.”
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.
+The suggestion initially marked tasks complete but did not fully align with how main.py was calling completion. I adjusted it so completion flows through Pet.complete_task() and verified behavior end-to-end.
 - How did you evaluate or verify what the AI suggested?
-
+Running python3 main.py after each change. Creating same-time tasks to confirm conflict warnings appear.
 ---
 
 ## 4. Testing and Verification
@@ -88,13 +95,20 @@ This is reasonable for this scenario because a realistic, executable plan is mor
 **a. What you tested**
 
 - What behaviors did you test?
+Sorting tasks by start time (HH:MM).
+Filtering by is_completed and by pet name.
+Schedule ordering by start time.
+Conflict detection for overlapping tasks.
 - Why were these tests important?
+These tests were important because they validate core scheduling correctness and user trust: correct order, realistic warnings, and predictable behavior.
 
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
+I am fairly confident the scheduler works for normal use cases and the implemented constraints.
 - What edge cases would you test next if you had more time?
-
+Duplicate task names within one pet.
+Recurrence + conflict interactions across multiple days.
 ---
 
 ## 5. Reflection
@@ -102,11 +116,16 @@ This is reasonable for this scenario because a realistic, executable plan is mor
 **a. What went well**
 
 - What part of this project are you most satisfied with?
+The strongest part was building a scheduler that is both practical and readable.
+I am most satisfied with adding useful real-world behavior: chronological scheduling, conflict warnings, and recurring task rollover.
 
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
+Add stronger unit test coverage.
+Separate scheduling strategy logic into pluggable strategy classes.
 
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+A key lesson was that AI speeds up implementation, but quality still depends on human validation. Precise prompts, incremental testing, and checking behavior in context are essential for reliable system design.
