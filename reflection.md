@@ -129,3 +129,27 @@ Separate scheduling strategy logic into pluggable strategy classes.
 
 - What is one important thing you learned about designing systems or working with AI on this project?
 A key lesson was that AI speeds up implementation, but quality still depends on human validation. Precise prompts, incremental testing, and checking behavior in context are essential for reliable system design.
+
+
+### AI Strategy (VS Code Copilot)
+
+**Most effective Copilot features for building the scheduler**
+- **Inline code suggestions** were most effective for fast method scaffolding (`sort_by_time`, `detect_conflicts`, recurrence helpers).
+- **Copilot Chat with file context** helped refine logic against actual class signatures in pawpal_system.py.
+- **Test generation support** was useful for quickly drafting happy-path and edge-case tests (empty tasks, duplicate times, recurrence rollover).
+- **Iterative prompt + rerun loop** (ask → edit → run `pytest`) made debugging predictable.
+
+**One AI suggestion I rejected/modified**
+- I rejected a suggestion that put task-completion flow directly in scheduling logic.
+- I modified it to keep completion in `Pet.complete_task()` and let `Task` handle recurrence date rollover.
+- This preserved cleaner responsibilities: `Scheduler` plans, `Pet` manages task lifecycle, `Task` owns recurrence rules.
+
+**How separate chat sessions helped**
+- I used separate sessions by phase (design, implementation, testing, packaging/reflection).
+- This prevented context mixing, kept prompts focused, and reduced accidental regressions.
+- It also made it easier to track decisions (UML changes vs. algorithm changes vs. UI/documentation updates).
+
+**What I learned about being the “lead architect” with AI**
+- AI accelerates coding, but architecture quality still depends on human decisions.
+- I had to define boundaries, reject overreach, and verify behavior with tests.
+- The main lesson: treat AI as a strong implementation partner, not the source of final design authority.

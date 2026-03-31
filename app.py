@@ -1,5 +1,6 @@
 import streamlit as st
 from pawpal_system import Pet, Owner, Task, Scheduler
+from datetime import date
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")
 
@@ -105,6 +106,11 @@ else:
         priority_label = st.selectbox("Priority", ["low", "medium", "high"], index=2)
         is_required = st.checkbox("Required", value=True)
         frequency = st.number_input("Frequency per day", min_value=1, max_value=10, value=1)
+
+        start_time = st.time_input("Start time", value=None)
+        recurrence = st.selectbox("Recurrence", ["none", "daily", "weekly"], index=0)
+        due_date = st.date_input("Due date", value=date.today())
+
         add_task_clicked = st.form_submit_button("Add task")
 
     if add_task_clicked:
@@ -118,24 +124,30 @@ else:
                 priority=priority_map[priority_label],
                 is_required=is_required,
                 frequency_per_day=int(frequency),
+                time=start_time.strftime("%H:%M") if start_time else "00:00",
+                recurrence=recurrence,
+                due_date=due_date.strftime("%Y-%m-%d"),
             )
-            # Call method from pawpal_system.py
             selected_pet.add_task(task)
             st.success(f"Added task to {selected_pet.name}: {task.title}")
 
     if selected_pet.tasks:
-        st.write(f"Tasks for {selected_pet.name}:")
+        st.write(f"Tasks for {selected_pet.name} (sorted by time):")
+        sorted_tasks = scheduler.sort_by_time(selected_pet.tasks, order="asc")
         st.table(
             [
                 {
                     "title": t.title,
+                    "time": t.time,
                     "duration_minutes": t.duration_minutes,
                     "priority": t.priority,
                     "required": t.is_required,
                     "frequency_per_day": t.frequency_per_day,
+                    "recurrence": t.recurrence,
+                    "due_date": t.due_date or "today",
                     "completed": t.is_completed,
                 }
-                for t in selected_pet.tasks
+                for t in sorted_tasks
             ]
         )
     else:
@@ -148,8 +160,33 @@ strategy = st.selectbox("Scheduling strategy", ["priority_first", "shortest_firs
 scheduler.strategy = strategy
 
 if st.button("Generate schedule"):
-    # Call method from pawpal_system.py
     plan = scheduler.generate_plan(owner)
+
+    # Conflict warnings first
+    conflicts = scheduler.detect_conflicts(owner)
+    if conflicts:
+        st.warning(f"{len(conflicts)} scheduling conflict(s) detected.")
+        for msg in conflicts:
+            st.warning(msg)
+        st.info("Tip: adjust one task start time to remove overlap.")
+
+    # Show timeline view using scheduler sort logic
+    timeline = scheduler.schedule_by_start_time(owner)
+    if timeline:
+        st.subheader("Today's Timeline (chronological)")
+        st.table(
+            [
+                {
+                    "pet": pet_name,
+                    "task": task.title,
+                    "start": task.time,
+                    "end": task.get_end_time(),
+                    "duration": task.duration_minutes,
+                    "priority": task.priority,
+                }
+                for pet_name, task in timeline
+            ]
+        )
 
     if not plan:
         st.warning("No tasks selected.")
@@ -162,8 +199,6 @@ if st.button("Generate schedule"):
                 f"({task.duration_minutes} min, priority={task.priority}, "
                 f"{'required' if task.is_required else 'optional'})"
             )
-            # Call method from pawpal_system.py
             st.caption(scheduler.explain_selection(task))
             total += task.duration_minutes
-
         st.success(f"Total planned time: {total} / {owner.daily_time_available} minutes")
